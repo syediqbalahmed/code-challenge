@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  backend:
+    build: ./backend
+    environment:
+       - PORT=3001
+#      - DB=postgres://postgres:postgres@db/postgres
+    depends_on:
+      - db
+    ports:
+      - "3001:3001"
+    networks:
+      - network-backend
+      - network-frontend
+
+  frontend:
+    build: ./frontend
+    environment:
+      - API_HOST=http://localhost:3001
+#        PORT=3000
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - network-frontend
+      - network-backend
+
+  db:
+    image: postgres:11.2-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    networks:
+      - network-backend
+
+networks:
+  network-backend:
+  network-frontend:
